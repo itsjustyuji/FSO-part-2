@@ -3,16 +3,20 @@ import { useState } from 'react'
 const Show=({persons})=>{
   return(
     <>
-    {persons.map(person=><div key={person.name}>{person.name}</div>)}
+    {persons.map(person=><div key={person.name}>{person.name} {person.number}</div>)}
     </>
   )
 }
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { 
+      name: 'Arto Hellas',
+      number: '040-1234567'
+    }
   ]) 
   const [newName, setNewName] = useState('')
+  const [newNum, setNewNum] = useState('')
 
   const clickSubmit=(e)=>{
     e.preventDefault()
@@ -26,15 +30,22 @@ const App = () => {
   } else {
     const personsObject = {
     name: trimmedName,
+    number: newNum,
     id: String(persons.length + 1),
     }
     setPersons(persons.concat(personsObject))
   }
   setNewName('')
+  setNewNum('')
 }
 
   const handleChange=(e)=>{
     setNewName(e.target.value)
+  }
+
+  const handleNumChange=(e)=>{
+    console.log(e.target.value)
+    setNewNum(e.target.value)
   }
 
   return (
@@ -43,6 +54,9 @@ const App = () => {
       <form onSubmit={clickSubmit}> 
         <div>
           name: <input value={newName} onChange={handleChange} />
+        </div>
+        <div>
+          number: <input value={newNum} onChange={handleNumChange}/>
         </div>
         <div>
           <button type="submit">add</button>
