@@ -3,7 +3,7 @@ import { useState } from 'react'
 const Show=({persons})=>{
   return(
     <>
-    {persons.map(person=><div>{person.name}</div>)}
+    {persons.map(person=><div key={person.name}>{person.name}</div>)}
     </>
   )
 }
@@ -16,13 +16,22 @@ const App = () => {
 
   const clickSubmit=(e)=>{
     e.preventDefault()
-    const personsObject={
-      name: newName,
-      id: String(persons.length+1),
+    const trimmedName = newName.trim()
+
+    if (trimmedName==='') {
+    return
+  }
+    if (persons.some(person => person.name.toLowerCase() === trimmedName.toLowerCase())) {
+    window.alert(`${trimmedName} is already added to phonebook`)
+  } else {
+    const personsObject = {
+    name: trimmedName,
+    id: String(persons.length + 1),
     }
     setPersons(persons.concat(personsObject))
-    setNewName('')
   }
+  setNewName('')
+}
 
   const handleChange=(e)=>{
     setNewName(e.target.value)
