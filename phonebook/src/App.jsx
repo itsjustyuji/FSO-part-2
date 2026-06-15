@@ -21,22 +21,27 @@ const App = () => {
   }, [])
   console.log('render', persons.length, 'notes')
 
-  const clickSubmit=(e)=>{
-    e.preventDefault()
-    const trimmedName = newName.trim()
+  const clickSubmit = (e) => {
+  e.preventDefault()
+  const trimmedName = newName.trim()
 
-    if (trimmedName==='') {
-    return
-  }
-    if (persons.some(person => person.name.toLowerCase() === trimmedName.toLowerCase())) {
+  if (trimmedName === '') return
+
+  if (persons.some(person => person.name.toLowerCase() === trimmedName.toLowerCase())) {
     window.alert(`${trimmedName} is already added to phonebook`)
   } else {
+    // 1. Remove the 'id' field completely from your local object
     const personsObject = {
-    name: trimmedName,
-    number: newNum,
-    id: String(persons.length + 1),
+      name: trimmedName,
+      number: newNum
     }
-    setPersons(persons.concat(personsObject))
+
+    axios
+      .post('http://localhost:3001/persons', personsObject)
+      .then(response => {
+        // 2. Use response.data because it includes the server-generated ID!
+        setPersons(persons.concat(response.data))
+      })
   }
   setNewName('')
   setNewNum('')
