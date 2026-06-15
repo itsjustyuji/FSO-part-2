@@ -3,6 +3,7 @@ import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,12 +12,9 @@ const App = () => {
   const [filter, setFilter]=useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService.getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
   console.log('render', persons.length, 'notes')
@@ -30,17 +28,14 @@ const App = () => {
   if (persons.some(person => person.name.toLowerCase() === trimmedName.toLowerCase())) {
     window.alert(`${trimmedName} is already added to phonebook`)
   } else {
-    // 1. Remove the 'id' field completely from your local object
     const personsObject = {
       name: trimmedName,
       number: newNum
     }
 
-    axios
-      .post('http://localhost:3001/persons', personsObject)
-      .then(response => {
-        // 2. Use response.data because it includes the server-generated ID!
-        setPersons(persons.concat(response.data))
+    personService.create(personsObject)
+      .then(returnedPersons => {
+        setPersons(persons.concat(returnedPersons))
       })
   }
   setNewName('')
