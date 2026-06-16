@@ -25,8 +25,22 @@ const App = () => {
 
   if (trimmedName === '') return
 
-  if (persons.some(person => person.name.toLowerCase() === trimmedName.toLowerCase())) {
-    window.alert(`${trimmedName} is already added to phonebook`)
+  const existingPerson=persons.find(person => (person.name.toLowerCase() === trimmedName.toLowerCase())) 
+  if(existingPerson){
+    const result=window.confirm(`${trimmedName} is already added to phonebook, replace the old number with a new one?`)
+    if(result===true){
+      const updatePersonsObject={
+        name: trimmedName,
+        number: newNum
+      }
+      personService.update(existingPerson.id,updatePersonsObject)
+      .then(returnedPersons => {
+        setPersons(persons.map(person => person.id === existingPerson.id ? returnedPersons : person))
+      })
+    }
+    else{
+      console.log(`Rejected`)
+    }
   } else {
     const personsObject = {
       name: trimmedName,
