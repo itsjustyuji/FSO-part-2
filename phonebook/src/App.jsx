@@ -4,12 +4,15 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './services/persons'
+import Notification from './components/Notifications'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [filter, setFilter]=useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     personService.getAll()
@@ -36,6 +39,12 @@ const App = () => {
       personService.update(existingPerson.id,updatePersonsObject)
       .then(returnedPersons => {
         setPersons(persons.map(person => person.id === existingPerson.id ? returnedPersons : person))
+        setMessage(
+          `${trimmedName} number updated`
+        )
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
     }
     else{
@@ -50,6 +59,13 @@ const App = () => {
     personService.create(personsObject)
       .then(returnedPersons => {
         setPersons(persons.concat(returnedPersons))
+
+        setMessage(
+          `Added ${trimmedName}`
+        )
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
   }
   setNewName('')
@@ -69,6 +85,7 @@ const deletePerson=(id,name)=> {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter filter={filter} setFilter={setFilter} />
       <h3>add a new</h3>
       <PersonForm onSubmit={clickSubmit} 
